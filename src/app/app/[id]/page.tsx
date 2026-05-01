@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useStore } from '../context/StoreContext';
-import { Button } from '../components/ui/Button';
-import { Star, Download, ShieldCheck, Share, ArrowLeft, HardDrive, Info } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { formatDownloads, formatSize } from '../lib/utils';
-import { fetchAppDetails, AppModel } from '../lib/api';
+"use client";
 
-export const AppDetails = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useStore } from '../../../context/StoreContext';
+import { Button } from '../../../components/ui/Button';
+import { Star, ShieldCheck, Share, ArrowLeft, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { formatDownloads, formatSize } from '../../../lib/utils';
+import { fetchAppDetails, AppModel } from '../../../lib/api';
+
+export default function AppDetails() {
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const { getAppById, startDownload, downloads } = useStore();
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
   const [app, setApp] = useState<AppModel | null>(null);
@@ -42,7 +45,7 @@ export const AppDetails = () => {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
         <h2 className="text-2xl font-bold mb-4">App not found</h2>
-        <Button onClick={() => navigate('/')}>Return Home</Button>
+        <Button onClick={() => router.push('/')}>Return Home</Button>
       </div>
     );
   }
@@ -55,7 +58,7 @@ export const AppDetails = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       <button 
-        onClick={() => navigate(-1)} 
+        onClick={() => router.back()} 
         className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 mb-8 transition-colors"
       >
         <ArrowLeft className="w-5 h-5" /> Back
@@ -284,4 +287,4 @@ export const AppDetails = () => {
       </AnimatePresence>
     </div>
   );
-};
+}

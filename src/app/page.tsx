@@ -1,12 +1,14 @@
+"use client";
+
 import React from 'react';
 import { useStore } from '../context/StoreContext';
 import { AppCard } from '../components/ui/AppCard';
 import { Button } from '../components/ui/Button';
-import { ChevronRight, Gamepad2, Smartphone, TrendingUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ChevronRight, Gamepad2, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 
-export const Home = () => {
+export default function Home() {
   const { apps, featuredApps, isLoading } = useStore();
 
   const games = apps.filter(a => a.category === 'Games').slice(0, 8);
@@ -60,7 +62,7 @@ export const Home = () => {
               </div>
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Top Games</h2>
             </div>
-            <Link to="/category/Games">
+            <Link href="/category/Games">
               <Button variant="ghost" className="hidden sm:flex gap-2">
                 See All <ChevronRight className="w-4 h-4" />
               </Button>
@@ -91,7 +93,7 @@ export const Home = () => {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {newReleases.map((app, i) => (
-              <Link key={app.id} to={`/app/${app.id}`}>
+              <Link key={app.id} href={`/app/${app.id}`}>
                 <motion.div 
                   initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
                   className="flex items-center gap-4 p-4 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors group cursor-pointer"
@@ -114,4 +116,4 @@ export const Home = () => {
       </section>
     </div>
   );
-};
+}

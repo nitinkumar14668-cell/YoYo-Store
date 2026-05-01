@@ -1,13 +1,29 @@
-import React, { useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useStore } from '../context/StoreContext';
-import { AppCard } from '../components/ui/AppCard';
-import { Button } from '../components/ui/Button';
-import { AppModel } from '../lib/api';
+"use client";
 
-export const CategoryPage = () => {
-  const { catName } = useParams<{ catName?: string }>();
-  const [searchParams] = useSearchParams();
+import React, { useEffect } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useStore } from '../../../context/StoreContext';
+import { AppCard } from '../../../components/ui/AppCard';
+import { Button } from '../../../components/ui/Button';
+import { AppModel } from '../../../lib/api';
+
+export default function CategoryPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="flex justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <CategoryPageContent />
+    </React.Suspense>
+  );
+}
+
+function CategoryPageContent() {
+  const params = useParams();
+  const catName = params?.catName as string | undefined;
+  
+  const searchParams = useSearchParams();
   const query = searchParams.get('q');
   
   const { apps, loadMoreApps, searchStore, isLoading } = useStore();
@@ -60,4 +76,4 @@ export const CategoryPage = () => {
       )}
     </div>
   );
-};
+}

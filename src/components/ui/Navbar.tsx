@@ -1,6 +1,8 @@
+"use client";
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, Moon, Sun, Bell, LayoutDashboard, Library } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Search, Menu, Moon, Sun, Bell, LayoutDashboard, ShoppingBag, Play } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from './Button';
 import { useStore } from '../../context/StoreContext';
@@ -11,14 +13,14 @@ export const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const { searchHistory, addSearchRecord, clearSearchHistory } = useStore();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       addSearchRecord(searchQuery);
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
     }
   };
@@ -35,18 +37,19 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="bg-blue-600 p-1.5 rounded-lg group-hover:bg-blue-700 transition-colors">
-                <LayoutDashboard className="w-6 h-6 text-white" />
+            <Link href="/" className="flex items-center gap-2 group tracking-tight">
+              <div className="relative flex items-center justify-center p-1.5 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 group-hover:from-cyan-500 group-hover:via-blue-600 group-hover:to-purple-700 transition-all duration-300 shadow-lg shadow-purple-500/25">
+                <ShoppingBag className="w-6 h-6 text-white" strokeWidth={2.5} />
+                <Play className="w-2.5 h-2.5 text-white absolute mt-1 ml-0.5 fill-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
-                Yoyo Store
+              <span className="text-xl font-black uppercase tracking-wider bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 dark:from-cyan-300 dark:via-blue-400 dark:to-purple-500 bg-clip-text text-transparent">
+                YoYo Store
               </span>
             </Link>
             
             <div className="hidden md:flex gap-6">
               {navLinks.map(link => (
-                <Link key={link.name} to={link.path} className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors">
+                <Link key={link.name} href={link.path} className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors">
                   {link.name}
                 </Link>
               ))}
@@ -90,7 +93,7 @@ export const Navbar = () => {
                           className="flex items-center gap-3 px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl cursor-pointer text-sm text-zinc-700 dark:text-zinc-300"
                           onClick={() => {
                             setSearchQuery(query);
-                            navigate(`/search?q=${encodeURIComponent(query)}`);
+                            router.push(`/search?q=${encodeURIComponent(query)}`);
                           }}
                         >
                           <Search className="w-3.5 h-3.5 text-zinc-400" />
@@ -158,7 +161,7 @@ export const Navbar = () => {
                 {navLinks.map(link => (
                   <Link 
                     key={link.name} 
-                    to={link.path} 
+                    href={link.path} 
                     className="px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 font-medium text-zinc-800 dark:text-zinc-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >

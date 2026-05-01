@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Star, Download, HardDrive } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { AppModel } from '../../lib/api';
-import { formatDownloads, formatSize } from '../../lib/utils';
-import { Link } from 'react-router-dom';
+import { formatDownloads } from '../../lib/utils';
+import Link from 'next/link';
 
 interface AppCardProps {
   app: AppModel;
@@ -13,7 +13,7 @@ interface AppCardProps {
 export const AppCard = ({ app, featured }: AppCardProps) => {
   if (featured) {
     return (
-      <Link to={`/app/${app.id}`}>
+      <Link href={`/app/${app.id}`}>
         <motion.div
           whileHover={{ y: -5 }}
           className="relative overflow-hidden rounded-3xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 shadow-xl group"
@@ -55,7 +55,7 @@ export const AppCard = ({ app, featured }: AppCardProps) => {
   }
 
   return (
-    <Link to={`/app/${app.id}`}>
+    <Link href={`/app/${app.id}`}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         className="flex flex-col gap-3 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800/50 hover:shadow-xl dark:hover:shadow-black/50 transition-all cursor-pointer h-full"

@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useState } from 'react';
-import { Button } from '../components/ui/Button';
-import { useStore } from '../context/StoreContext';
+import { Button } from '../../components/ui/Button';
+import { useStore } from '../../context/StoreContext';
 import { Upload, Plus, Edit, Trash2, TrendingUp, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const chartData = [
   { name: 'Mon', downloads: 4000, revenue: 2400 },
@@ -15,7 +17,7 @@ const chartData = [
   { name: 'Sun', downloads: 3490, revenue: 4300 },
 ];
 
-export const DeveloperDashboard = () => {
+export default function DeveloperDashboard() {
   const { apps } = useStore();
   const devApps = apps.filter(a => a.developer === 'Google LLC' || a.developer === 'Instagram'); // Mocking logged in as Google LLC
   const [showAddForm, setShowAddForm] = useState(false);
@@ -194,4 +196,4 @@ export const DeveloperDashboard = () => {
       </AnimatePresence>
     </div>
   );
-};
+}
