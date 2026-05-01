@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Star, Download, HardDrive } from 'lucide-react';
-import { AppModel } from '../../data/mockData';
+import { AppModel } from '../../lib/api';
 import { formatDownloads, formatSize } from '../../lib/utils';
 import { Link } from 'react-router-dom';
 

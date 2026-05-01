@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { Button } from '../components/ui/Button';
 import { Star, Download, ShieldCheck, Share, ArrowLeft, HardDrive, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatDownloads, formatSize } from '../lib/utils';
+import { fetchAppDetails, AppModel } from '../lib/api';
 
 export const AppDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getAppById, startDownload, downloads } = useStore();
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
+  const [app, setApp] = useState<AppModel | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const app = getAppById(id || '');
+  useEffect(() => {
+    if (!id) return;
+    const cachedApp = getAppById(id);
+    if (cachedApp) {
+      setApp(cachedApp);
+      setLoading(false);
+      // Fetch full details in background to get more screenshots/description
+      fetchAppDetails(id).then(fullApp => {
+        if (fullApp) setApp(fullApp);
+      });
+    } else {
+      setLoading(true);
+      fetchAppDetails(id).then(fullApp => {
+        if (fullApp) setApp(fullApp);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    }
+  }, [id, getAppById]);
+
+  if (loading) {
+    return <div className="min-h-[70vh] flex items-center justify-center">Loading Data...</div>;
+  }
 
   if (!app) {
     return (
@@ -63,7 +87,7 @@ export const AppDetails = () => {
                 <span>Downloads</span>
               </div>
               <div className="flex flex-col items-center gap-1">
-                <span className="font-bold text-lg text-zinc-900 dark:text-white">{app.category}</span>
+                <span className="font-bold text-lg text-zinc-900 dark:text-white truncate max-w-[100px]">{app.category}</span>
                 <span>Category</span>
               </div>
             </div>
@@ -87,7 +111,7 @@ export const AppDetails = () => {
                 <Button 
                   size="lg" 
                   className="w-48 group relative overflow-hidden" 
-                  onClick={() => startDownload(app.id)}
+                  onClick={() => startDownload(app.id, app)}
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     {app.price === 0 ? 'Install' : `Buy $${app.price}`}
@@ -156,7 +180,10 @@ export const AppDetails = () => {
           >
             <div className="lg:col-span-2">
               <h3 className="text-xl font-bold mb-4">About this {app.category === 'Games' ? 'Game' : 'App'}</h3>
-              <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{app.description}</p>
+              <div 
+                className="text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap prose dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: app.description }}
+              />
             </div>
             
             <div className="bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 space-y-6">
@@ -167,7 +194,7 @@ export const AppDetails = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
                     <span className="text-zinc-500">Provider</span>
-                    <span className="font-medium text-right">{app.developer}</span>
+                    <span className="font-medium text-right line-clamp-1 max-w-[150px]">{app.developer}</span>
                   </div>
                   <div className="flex justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
                     <span className="text-zinc-500">Size</span>
@@ -226,25 +253,27 @@ export const AppDetails = () => {
             </div>
 
             <div className="space-y-6">
-              {app.reviews.map((review) => (
+              {app.reviews && app.reviews.length > 0 ? app.reviews.map((review) => (
                 <div key={review.id} className="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <img src={review.avatar} alt="avatar" className="w-10 h-10 rounded-full bg-zinc-200" />
+                      <img src={review.avatarUrl || 'https://via.placeholder.com/150'} alt="avatar" className="w-10 h-10 rounded-full bg-zinc-200" />
                       <div>
-                        <p className="font-semibold">{review.user}</p>
-                        <p className="text-xs text-zinc-500">{review.date}</p>
+                        <p className="font-semibold">{review.userName}</p>
+                        <p className="text-xs text-zinc-500">{new Date(review.date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex text-yellow-400 gap-0.5">
                       {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className={`w-4 h-4 ${s <= review.rating ? 'fill-current' : 'fill-none text-zinc-300 dark:text-zinc-700'}`} />
+                        <Star key={s} className={`w-4 h-4 ${s <= review.score ? 'fill-current' : 'fill-none text-zinc-300 dark:text-zinc-700'}`} />
                       ))}
                     </div>
                   </div>
-                  <p className="text-zinc-700 dark:text-zinc-300">{review.comment}</p>
+                  <p className="text-zinc-700 dark:text-zinc-300">{review.text}</p>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8 text-zinc-500">No reviews found for this app yet.</div>
+              )}
             </div>
             
             <div className="mt-8">

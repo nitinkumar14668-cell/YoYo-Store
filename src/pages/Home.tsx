@@ -7,11 +7,23 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 
 export const Home = () => {
-  const { apps, featuredApps } = useStore();
+  const { apps, featuredApps, isLoading } = useStore();
 
   const games = apps.filter(a => a.category === 'Games').slice(0, 8);
-  const productivity = apps.filter(a => a.category === 'Productivity').slice(0, 8);
-  const newReleases = apps.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()).slice(0, 12);
+  const newReleases = [...apps].sort((a, b) => {
+    // If they don't have lastUpdated, preserve order or let them fall
+    const timeA = new Date(a.lastUpdated || 0).getTime();
+    const timeB = new Date(b.lastUpdated || 0).getTime();
+    return timeB - timeA;
+  }).slice(0, 12);
+
+  if (isLoading && apps.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-20">

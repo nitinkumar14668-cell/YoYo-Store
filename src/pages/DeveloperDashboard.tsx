@@ -17,7 +17,7 @@ const chartData = [
 
 export const DeveloperDashboard = () => {
   const { apps } = useStore();
-  const devApps = apps.filter(a => a.developer === 'Nexus Studios'); // Mocking logged in as Nexus Studios
+  const devApps = apps.filter(a => a.developer === 'Google LLC' || a.developer === 'Instagram'); // Mocking logged in as Google LLC
   const [showAddForm, setShowAddForm] = useState(false);
 
   return (
@@ -25,7 +25,7 @@ export const DeveloperDashboard = () => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">Developer Console</h1>
-          <p className="text-zinc-500">Welcome back, Nexus Studios</p>
+          <p className="text-zinc-500">Welcome back, Yoyo Studios</p>
         </div>
         <Button onClick={() => setShowAddForm(true)} className="gap-2">
           <Plus className="w-5 h-5" /> New App
