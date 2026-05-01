@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Menu, Moon, Sun, Bell, LayoutDashboard, ShoppingBag, Play } from 'lucide-react';
+import { Search, Menu, Moon, Sun, Bell, ShoppingBag, Play } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from './Button';
 import { useStore } from '../../context/StoreContext';
